@@ -1,5 +1,10 @@
+package Players;
+
+import Coordinate.Coordinate;
+
 import java.util.ArrayList;
 import java.util.List;
+import Coordinate.Status;
 
 public class Board {
     int[][] board;
@@ -8,17 +13,17 @@ public class Board {
         this.board = board;
     }
 
-    public boolean addWarshipFail(int column, int row, int length, String direction) {
+    public boolean addWarship(int column, int row, int length, String direction) {
         List<Coordinate> battleshipCoordinates = new ArrayList<>();
         for (int i = 0; i < length; i++) {
             if (direction.equalsIgnoreCase("left") && isNotOccupied(column - i, row)) {
-                battleshipCoordinates.add(new Coordinate(row, column - i));
+                battleshipCoordinates.add(new Coordinate(row, column - i, Status.SHIP));
             } else if (direction.equalsIgnoreCase("right") && isNotOccupied(column + i, row)) {
-                battleshipCoordinates.add(new Coordinate(row, column + i));
+                battleshipCoordinates.add(new Coordinate(row, column + i, Status.SHIP));
             } else if (direction.equalsIgnoreCase("up") && isNotOccupied(column, row - i)) {
-                battleshipCoordinates.add(new Coordinate(row - i, column));
+                battleshipCoordinates.add(new Coordinate(row - i, column, Status.SHIP));
             } else if (direction.equalsIgnoreCase("down") && isNotOccupied(column, row + i)) {
-                battleshipCoordinates.add(new Coordinate(row + i, column));
+                battleshipCoordinates.add(new Coordinate(row + i, column, Status.SHIP));
             } else {
                 return true;
             }
@@ -55,6 +60,4 @@ public class Board {
         }
         return stringBuilder.toString();
     }
-
-    private record Coordinate(int row, int column) { }
 }
