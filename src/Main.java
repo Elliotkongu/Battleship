@@ -8,5 +8,7 @@ public class Main {
         Setup setup = new Setup();
         setup.setupPlayerBoard(player);
         setup.setupAIBoard(AI);
+        Game game = new Game();
+        game.run(player, AI);
     }
 }

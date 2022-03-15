@@ -24,7 +24,7 @@ public class Player {
         return playerBoard;
     }
 
-    public List<Battleship> getWarshipList() {
+    public List<Battleship> getBattleshipList() {
         return battleshipList;
     }
 

@@ -4,7 +4,6 @@ import Coordinate.Coordinate;
 
 import java.util.ArrayList;
 import java.util.List;
-import Coordinate.Status;
 
 public class Board {
     int[][] board;
@@ -17,13 +16,13 @@ public class Board {
         List<Coordinate> battleshipCoordinates = new ArrayList<>();
         for (int i = 0; i < length; i++) {
             if (direction.equalsIgnoreCase("left") && isNotOccupied(column - i, row)) {
-                battleshipCoordinates.add(new Coordinate(row, column - i, Status.SHIP));
+                battleshipCoordinates.add(new Coordinate(row, column - i));
             } else if (direction.equalsIgnoreCase("right") && isNotOccupied(column + i, row)) {
-                battleshipCoordinates.add(new Coordinate(row, column + i, Status.SHIP));
+                battleshipCoordinates.add(new Coordinate(row, column + i));
             } else if (direction.equalsIgnoreCase("up") && isNotOccupied(column, row - i)) {
-                battleshipCoordinates.add(new Coordinate(row - i, column, Status.SHIP));
+                battleshipCoordinates.add(new Coordinate(row - i, column));
             } else if (direction.equalsIgnoreCase("down") && isNotOccupied(column, row + i)) {
-                battleshipCoordinates.add(new Coordinate(row + i, column, Status.SHIP));
+                battleshipCoordinates.add(new Coordinate(row + i, column));
             } else {
                 return true;
             }
@@ -33,6 +32,10 @@ public class Board {
         }
         battleship.setCoordinates(battleshipCoordinates);
         return false;
+    }
+
+    public int[][] getBoard() {
+        return board;
     }
 
     private boolean isNotOccupied(int column, int row) {

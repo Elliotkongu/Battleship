@@ -36,7 +36,7 @@ public class Setup {
             System.out.println(player1Board);
         }
         player.setPlayerBoard(player1Board);
-        System.out.println(player.getWarshipList());
+        System.out.println(player.getBattleshipList());
     }
 
     /**
@@ -66,7 +66,7 @@ public class Setup {
         }
         System.out.println(player2Board);
         AI.setPlayerBoard(player2Board);
-        System.out.println(AI.getWarshipList());
+        System.out.println(AI.getBattleshipList());
     }
 
     /**
