@@ -1,3 +1,4 @@
+import Players.Battleship;
 import Players.Board;
 import Players.Player;
 
@@ -21,18 +22,21 @@ public class Setup {
             int column = getColumn(scanner, i);
             int row = getRow(scanner);
             String direction = getDirection(scanner, row, column, i);
-            if (player1Board.addWarship(column, row, i, direction)) {
+            Battleship battleship = new Battleship(i);
+            if (player1Board.addWarship(column, row, i, direction, battleship)) {
                 System.out.println("You can't layer a ship onto another ship!");
                 i--;
                 continue;
             }
-//            player.addWarship(new Players.Warship(i, new Coordinate.Coordinate(row, column)));
+            player.addBattleship(battleship);
             if (i == 3 && !twoThrees) {
                 twoThrees = true;
                 i--;
             }
             System.out.println(player1Board);
         }
+        player.setPlayerBoard(player1Board);
+        System.out.println(player.getWarshipList());
     }
 
     /**
@@ -40,7 +44,7 @@ public class Setup {
      * The ship sizes are 2,3,3,4,5
      * @param AI The player object representing the AI
      */
-    public void setupAIBoard( Player AI) {
+    public void setupAIBoard(Player AI) {
         boolean twoThrees = false;
         Random random = new Random();
 
@@ -49,16 +53,20 @@ public class Setup {
             int column = random.nextInt(7);
             int row = random.nextInt(7);
             String direction = getAIDirection(row, column, i);
-            if (player2Board.addWarship(column, row, i, direction)) {
+            Battleship battleship = new Battleship(i);
+            if (player2Board.addWarship(column, row, i, direction, battleship)) {
                 i--;
                 continue;
             }
+            AI.addBattleship(battleship);
             if (i == 3 && !twoThrees) {
                 twoThrees = true;
                 i--;
             }
         }
         System.out.println(player2Board);
+        AI.setPlayerBoard(player2Board);
+        System.out.println(AI.getWarshipList());
     }
 
     /**

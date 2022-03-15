@@ -1,14 +1,22 @@
 package Players;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Player {
     private Board playerBoard;
-    private List<Warship> warshipList;
+    private List<Battleship> battleshipList;
 
-    public Player() {}
+    public Player() {
+        this.battleshipList = new ArrayList<>();
+    }
 
     public Player(Board playerBoard) {
+        this.playerBoard = playerBoard;
+        this.battleshipList = new ArrayList<>();
+    }
+
+    public void setPlayerBoard(Board playerBoard) {
         this.playerBoard = playerBoard;
     }
 
@@ -16,11 +24,11 @@ public class Player {
         return playerBoard;
     }
 
-    public List<Warship> getWarshipList() {
-        return warshipList;
+    public List<Battleship> getWarshipList() {
+        return battleshipList;
     }
 
-    public void addWarship(Warship warship) {
-        warshipList.add(warship);
+    public void addBattleship(Battleship battleship) {
+        battleshipList.add(battleship);
     }
 }
