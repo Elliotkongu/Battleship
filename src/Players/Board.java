@@ -1,6 +1,6 @@
 package Players;
 
-import Coordinate.Coordinate;
+import Util.Coordinate;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,7 +12,7 @@ public class Board {
         this.board = board;
     }
 
-    public boolean addWarship(int column, int row, int length, String direction, Battleship battleship) {
+    public boolean addBattleship(int column, int row, int length, String direction, Battleship battleship) {
         List<Coordinate> battleshipCoordinates = new ArrayList<>();
         for (int i = 0; i < length; i++) {
             if (direction.equalsIgnoreCase("left") && isNotOccupied(column - i, row)) {

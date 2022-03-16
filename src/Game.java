@@ -1,7 +1,8 @@
-import Coordinate.Coordinate;
+import Util.Coordinate;
 import Players.Battleship;
 import Players.Board;
 import Players.Player;
+import Util.Status;
 
 import java.util.List;
 import java.util.Random;
@@ -36,34 +37,45 @@ public class Game {
         String format = "%-40s%s%n";
         System.out.printf(format, player.getPlayerBoard(), "");
         System.out.printf(format, playerHitBoard, "");
-//        System.out.println(player.getPlayerBoard() + "\t\t\t\t" + playerHitBoard);
     }
 
     private void playerShoot(Player AI, Board playerHitBoard) {
         Scanner scanner = new Scanner(System.in);
-        int column = getColumn(scanner);
-        int row = getRow(scanner);
-        Coordinate coordinate = new Coordinate(row, column);
-        if (isAIHit(coordinate, AI, playerHitBoard)) {
-            for (Battleship battleship:AI.getBattleshipList()) {
-                if (battleship.getCoordinates().stream().anyMatch(coordinate1 -> coordinate1.equals(coordinate))) {
-                    isShipDestroyed(battleship, AI);
-                    break;
+        boolean retry = true;
+        while(retry) {
+            int column = getColumn(scanner);
+            int row = getRow(scanner);
+            Coordinate coordinate = new Coordinate(row, column);
+            if (isAIHit(coordinate, AI, playerHitBoard).equals(Status.HIT)) {
+                for (Battleship battleship:AI.getBattleshipList()) {
+                    if (battleship.getCoordinates().stream().anyMatch(coordinate1 -> coordinate1.equals(coordinate))) {
+                        isShipDestroyed(battleship, AI);
+                        retry = false;
+                        break;
+                    }
                 }
+            } else if (isAIHit(coordinate, AI, playerHitBoard).equals(Status.MISSED)) {
+                retry = false;
             }
         }
     }
     private void AIShoot(Player player) {
         Random random = new Random();
-        int column = random.nextInt(7);
-        int row = random.nextInt(7);
-        Coordinate coordinate = new Coordinate(row, column);
-        if (isPlayerHit(coordinate, player)) {
-            for (Battleship battleship:player.getBattleshipList()) {
-                if (battleship.getCoordinates().stream().anyMatch(coordinate1 -> coordinate1.equals(coordinate))) {
-                    isShipDestroyed(battleship, player);
-                    break;
+        boolean retry = true;
+        while (retry) {
+            int column = random.nextInt(7);
+            int row = random.nextInt(7);
+            Coordinate coordinate = new Coordinate(row, column);
+            if (isPlayerHit(coordinate, player).equals(Status.HIT)) {
+                for (Battleship battleship:player.getBattleshipList()) {
+                    if (battleship.getCoordinates().stream().anyMatch(coordinate1 -> coordinate1.equals(coordinate))) {
+                        isShipDestroyed(battleship, player);
+                        retry = false;
+                        break;
+                    }
                 }
+            } else if (isPlayerHit(coordinate, player).equals(Status.MISSED)) {
+                retry = false;
             }
         }
     }
@@ -116,33 +128,40 @@ public class Game {
         }
         return rowInt;
     }
-    private boolean isAIHit(Coordinate coordinate, Player player, Board playerHitBoard) {
-        int[][] playerBoard = player.getPlayerBoard().getBoard();
+
+    /**
+     * Checks whether the coordinate is a hit, miss or already hit
+     * @param coordinate The coordinate to be checked
+     * @param AI The player object representing the AI
+     * @param playerHitBoard The board where the human player can see where they've hit
+     * @return
+     */
+    private Status isAIHit(Coordinate coordinate, Player AI, Board playerHitBoard) {
+        int[][] playerBoard = AI.getPlayerBoard().getBoard();
         if (playerBoard[coordinate.row()][coordinate.column()] == 1){
-            player.getPlayerBoard().getBoard()[coordinate.row()][coordinate.column()] = 2;
+            AI.getPlayerBoard().getBoard()[coordinate.row()][coordinate.column()] = 2;
             playerHitBoard.getBoard()[coordinate.row()][coordinate.column()] = 2;
             System.out.println("You hit!");
-            return true;
+            return Status.HIT;
         } else if (playerBoard[coordinate.row()][coordinate.column()] == 2) {
             System.out.println("You've already hit that!");
-            return false;
+            return Status.ALREADY_HIT;
         }
         System.out.println("You missed!");
-        return false;
+        return Status.MISSED;
     }
 
-    private boolean isPlayerHit(Coordinate coordinate, Player player) {
+    private Status isPlayerHit(Coordinate coordinate, Player player) {
         int[][] playerBoard = player.getPlayerBoard().getBoard();
         if (playerBoard[coordinate.row()][coordinate.column()] == 1){
             player.getPlayerBoard().getBoard()[coordinate.row()][coordinate.column()] = 2;
             System.out.println("You've been hit in " + coordinate + "!");
-            return true;
+            return Status.HIT;
         } else if (playerBoard[coordinate.row()][coordinate.column()] == 2) {
-            System.out.println("Your opponent already hit that!");
-            return false;
+            return Status.ALREADY_HIT;
         }
         System.out.println("Your opponent missed!");
-        return false;
+        return Status.MISSED;
     }
 
     private void isShipDestroyed(Battleship battleship, Player player) {

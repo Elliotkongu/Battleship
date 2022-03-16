@@ -1,6 +1,6 @@
 package Players;
 
-import Coordinate.Coordinate;
+import Util.Coordinate;
 
 import java.util.List;
 

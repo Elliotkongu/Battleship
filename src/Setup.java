@@ -23,7 +23,7 @@ public class Setup {
             int row = getRow(scanner);
             String direction = getDirection(scanner, row, column, i);
             Battleship battleship = new Battleship(i);
-            if (player1Board.addWarship(column, row, i, direction, battleship)) {
+            if (player1Board.addBattleship(column, row, i, direction, battleship)) {
                 System.out.println("You can't layer a ship onto another ship!");
                 i--;
                 continue;
@@ -57,7 +57,7 @@ public class Setup {
                 continue;
             }
             Battleship battleship = new Battleship(i);
-            if (player2Board.addWarship(column, row, i, direction, battleship)) {
+            if (player2Board.addBattleship(column, row, i, direction, battleship)) {
                 i--;
                 continue;
             }

@@ -1,9 +1,10 @@
-package Coordinate;
+package Util;
 
 public record Coordinate(int row, int column) {
     @Override
     public String toString() {
-        return row + ", " + column;
+        char[] alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".toCharArray();
+        return alphabet[column] + ", " + (row+1);
     }
 
     @Override
