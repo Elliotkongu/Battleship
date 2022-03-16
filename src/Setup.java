@@ -36,7 +36,6 @@ public class Setup {
             System.out.println(player1Board);
         }
         player.setPlayerBoard(player1Board);
-        System.out.println(player.getBattleshipList());
     }
 
     /**
@@ -53,6 +52,10 @@ public class Setup {
             int column = random.nextInt(7);
             int row = random.nextInt(7);
             String direction = getAIDirection(row, column, i);
+            if (direction.equalsIgnoreCase("failed")) {
+                i--;
+                continue;
+            }
             Battleship battleship = new Battleship(i);
             if (player2Board.addWarship(column, row, i, direction, battleship)) {
                 i--;
@@ -64,9 +67,7 @@ public class Setup {
                 i--;
             }
         }
-        System.out.println(player2Board);
         AI.setPlayerBoard(player2Board);
-        System.out.println(AI.getBattleshipList());
     }
 
     /**
@@ -83,7 +84,11 @@ public class Setup {
             String column = scanner.nextLine();
             try {
                 columnInt = Integer.parseInt(column) - 1;
-                inputMatch = true;
+                if (columnInt <= 6) {
+                    inputMatch = true;
+                } else {
+                    System.out.println("You didn't write a number between 1 to 7");
+                }
             } catch (Exception e) {
                 System.out.println("You didn't write a number!");
             }
@@ -104,7 +109,11 @@ public class Setup {
             String row = scanner.nextLine();
             try {
                 rowInt = Integer.parseInt(row) - 1;
-                inputMatch = true;
+                if (rowInt <= 6) {
+                    inputMatch = true;
+                } else {
+                    System.out.println("You didn't write a number between 1 to 7");
+                }
             } catch (Exception e) {
                 System.out.println("You didn't write a number!");
             }
@@ -164,19 +173,26 @@ public class Setup {
         Random random = new Random();
         String[] directionArray = new String[]{"left", "right", "up", "down"};
         String direction = directionArray[random.nextInt(4)];
+        int attempts = 0;
         while (!inputMatch) {
             if (direction.equalsIgnoreCase("left") && columnInt < length) {
                 direction = directionArray[random.nextInt(4)];
+                attempts++;
                 continue;
             } else if (direction.equalsIgnoreCase("right") && columnInt + length > boardWidth) {
                 direction = directionArray[random.nextInt(4)];
+                attempts++;
                 continue;
             } else if (direction.equalsIgnoreCase("up") && rowInt < length) {
                 direction = directionArray[random.nextInt(4)];
+                attempts++;
                 continue;
             } else if (direction.equalsIgnoreCase("down") && rowInt + length > boardHeight) {
                 direction = directionArray[random.nextInt(4)];
+                attempts++;
                 continue;
+            } else if (attempts >= 15) {
+                return "failed";
             }
             inputMatch = true;
         }
