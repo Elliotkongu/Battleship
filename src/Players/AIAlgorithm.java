@@ -2,27 +2,23 @@ package Players;
 
 import Util.Coordinate;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class AIAlgorithm {
-    private Coordinate firstHit;
-    private Coordinate lastHit;
+    private List<Coordinate> previousShots;
     private String nextHitDirection;
 
-    public AIAlgorithm() {}
-
-    public Coordinate getFirstHit() {
-        return firstHit;
+    public AIAlgorithm() {
+        previousShots = new ArrayList<>();
     }
 
-    public void setFirstHit(Coordinate firstHit) {
-        this.firstHit = firstHit;
+    public List<Coordinate> getPreviousShots() {
+        return previousShots;
     }
 
-    public Coordinate getLastHit() {
-        return lastHit;
-    }
-
-    public void setLastHit(Coordinate lastHit) {
-        this.lastHit = lastHit;
+    public void addShot(Coordinate coordinate) {
+        previousShots.add(coordinate);
     }
 
     public String getNextHitDirection() {
@@ -34,8 +30,7 @@ public class AIAlgorithm {
     }
 
     public void reset() {
-        firstHit = null;
-        lastHit = null;
+        previousShots = new ArrayList<>();
         nextHitDirection = null;
     }
 }

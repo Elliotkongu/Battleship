@@ -18,11 +18,17 @@ public class Setup {
         boolean twoThrees = false;
         Scanner scanner = new Scanner(System.in);
         Board player1Board = new Board(new int[boardHeight][boardWidth]);
+        String[] shipNames = new String[]{"Patrol Boat", "Submarine", "Destroyer", "Battleship", "Carrier"};
         for (int i = 2; i <= 5; i++) {
             int column = getColumn(scanner, i);
             int row = getRow(scanner);
             String direction = getDirection(scanner, row, column, i);
-            Battleship battleship = new Battleship(i);
+            Battleship battleship;
+            if (!twoThrees) {
+                battleship = new Battleship(shipNames[i-2]);
+            } else {
+                battleship = new Battleship(shipNames[i-1]);
+            }
             if (player1Board.addBattleship(column, row, i, direction, battleship)) {
                 System.out.println("You can't layer a ship onto another ship!");
                 i--;
@@ -46,7 +52,7 @@ public class Setup {
     public void setupAIBoard(Player AI) {
         boolean twoThrees = false;
         Random random = new Random();
-
+        String[] shipNames = new String[]{"Patrol Boat", "Submarine", "Destroyer", "Battleship", "Carrier"};
         Board player2Board = new Board(new int[boardHeight][boardWidth]);
         for (int i = 2; i <= 5; i++) {
             int column = random.nextInt(7);
@@ -56,7 +62,12 @@ public class Setup {
                 i--;
                 continue;
             }
-            Battleship battleship = new Battleship(i);
+            Battleship battleship;
+            if (!twoThrees) {
+                battleship = new Battleship(shipNames[i-2]);
+            } else {
+                battleship = new Battleship(shipNames[i-1]);
+            }
             if (player2Board.addBattleship(column, row, i, direction, battleship)) {
                 i--;
                 continue;

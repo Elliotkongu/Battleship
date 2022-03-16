@@ -5,17 +5,17 @@ import Util.Coordinate;
 import java.util.List;
 
 public class Battleship {
-    private final int length;
     private List<Coordinate> coordinates;
     private boolean isDestroyed;
+    private final String name;
 
-    public Battleship(int length) {
-        this.length = length;
+    public Battleship(String name) {
+        this.name = name;
         this.isDestroyed = false;
     }
 
-    public int getLength() {
-        return length;
+    public String getName() {
+        return name;
     }
 
     public List<Coordinate> getCoordinates() {
@@ -32,5 +32,10 @@ public class Battleship {
 
     public void setDestroyed(boolean destroyed) {
         isDestroyed = destroyed;
+    }
+
+    @Override
+    public String toString() {
+        return name;
     }
 }

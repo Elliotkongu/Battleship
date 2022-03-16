@@ -28,7 +28,7 @@ public class Board {
             }
         }
         for (Coordinate coordinate: battleshipCoordinates) {
-            board[coordinate.row()][coordinate.column()] = 1;
+            board[coordinate.getRow()][coordinate.getColumn()] = 1;
         }
         battleship.setCoordinates(battleshipCoordinates);
         return false;

@@ -66,68 +66,19 @@ public class Game {
         Random random = new Random();
         boolean retry = true;
         while (retry) {
-            if (aiAlgorithm.getLastHit() != null) {
-                Coordinate lastHitCoordinate = aiAlgorithm.getLastHit();
-                if (aiAlgorithm.getNextHitDirection() != null) {
-                    Coordinate coordinate = getCoordinate(aiAlgorithm, random, lastHitCoordinate, lastHitCoordinate.column() + 1, lastHitCoordinate.column() - 1, lastHitCoordinate.row() - 1, lastHitCoordinate.row() + 1);
-                    try {
-                        retry = isHitOrMiss(player, aiAlgorithm, coordinate);
-                    } catch (ArrayIndexOutOfBoundsException e) {
-                        Coordinate firstHitCoordinate = aiAlgorithm.getFirstHit();
-                        coordinate = getCoordinate(aiAlgorithm, random, firstHitCoordinate, firstHitCoordinate.column() - 1, firstHitCoordinate.column() + 1, firstHitCoordinate.row() + 1, firstHitCoordinate.row() - 1);
-                        retry = isHitOrMiss(player, aiAlgorithm, coordinate);
-                    }
-                } else {
-                    String[] directionArray = new String[]{"left", "right", "up", "down"};
-                    String direction = directionArray[random.nextInt(4)];
-                    Coordinate coordinate;
-                    switch (direction) {
-                        case "right" -> coordinate = new Coordinate(lastHitCoordinate.row(), lastHitCoordinate.column() + 1);
-                        case "left" -> coordinate = new Coordinate(lastHitCoordinate.row(), lastHitCoordinate.column() - 1);
-                        case "up" -> coordinate = new Coordinate(lastHitCoordinate.row() - 1, lastHitCoordinate.column());
-                        case "down" -> coordinate = new Coordinate(lastHitCoordinate.row() + 1, lastHitCoordinate.column());
-                        default -> coordinate = new Coordinate(random.nextInt(7), random.nextInt(7));
-                    }
-                    retry = isHitOrMiss(player, aiAlgorithm, coordinate);
-                    if (!retry) {
-                        switch (direction) {
-                            case "right" -> aiAlgorithm.setNextHitDirection("right");
-                            case "left" -> aiAlgorithm.setNextHitDirection("left");
-                            case "up" -> aiAlgorithm.setNextHitDirection("up");
-                            case "down" -> aiAlgorithm.setNextHitDirection("down");
-                            default -> aiAlgorithm.setNextHitDirection(null);
-                        }
-                    }
-                }
-            } else {
-                int column = random.nextInt(7);
-                int row = random.nextInt(7);
-                Coordinate coordinate = new Coordinate(row, column);
-                retry = isHitOrMiss(player, aiAlgorithm, coordinate);
-            }
+            int column = random.nextInt(7);
+            int row = random.nextInt(7);
+            Coordinate coordinate = new Coordinate(row, column);
+            retry = isHitOrMiss(player, aiAlgorithm, coordinate);
         }
-    }
-
-    private Coordinate getCoordinate(AIAlgorithm aiAlgorithm, Random random, Coordinate firstHitCoordinate, int i, int i2, int i3, int i4) {
-        Coordinate coordinate;
-        switch (aiAlgorithm.getNextHitDirection()) {
-            case "right" -> coordinate = new Coordinate(firstHitCoordinate.row(), i);
-            case "left" -> coordinate = new Coordinate(firstHitCoordinate.row(), i2);
-            case "up" -> coordinate = new Coordinate(i3, firstHitCoordinate.column());
-            case "down" -> coordinate = new Coordinate(i4, firstHitCoordinate.column());
-            default -> coordinate = new Coordinate(random.nextInt(7), random.nextInt(7));
-        }
-        return coordinate;
     }
 
     private boolean isHitOrMiss(Player player, AIAlgorithm aiAlgorithm, Coordinate coordinate) {
         boolean retry = true;
         Status status = isPlayerHit(coordinate, player);
+        coordinate.setStatus(status);
+        aiAlgorithm.addShot(coordinate);
         if (status.equals(Status.HIT)) {
-            if (aiAlgorithm.getFirstHit() == null) {
-                aiAlgorithm.setFirstHit(coordinate);
-            }
-            aiAlgorithm.setLastHit(coordinate);
             for (Battleship battleship : player.getBattleshipList()) {
                 if (battleship.getCoordinates().stream().anyMatch(coordinate1 -> coordinate1.equals(coordinate))) {
                     isPlayerShipDestroyed(battleship, player, aiAlgorithm);
@@ -203,12 +154,12 @@ public class Game {
      */
     private Status isAIHit(Coordinate coordinate, Player AI, Board playerHitBoard) {
         int[][] playerBoard = AI.getPlayerBoard().getBoard();
-        if (playerBoard[coordinate.row()][coordinate.column()] == 1) {
-            AI.getPlayerBoard().getBoard()[coordinate.row()][coordinate.column()] = 2;
-            playerHitBoard.getBoard()[coordinate.row()][coordinate.column()] = 2;
+        if (playerBoard[coordinate.getRow()][coordinate.getColumn()] == 1) {
+            AI.getPlayerBoard().getBoard()[coordinate.getRow()][coordinate.getColumn()] = 2;
+            playerHitBoard.getBoard()[coordinate.getRow()][coordinate.getColumn()] = 2;
             System.out.println("You hit!");
             return Status.HIT;
-        } else if (playerBoard[coordinate.row()][coordinate.column()] == 2) {
+        } else if (playerBoard[coordinate.getRow()][coordinate.getColumn()] == 2) {
             System.out.println("You've already hit that!");
             return Status.ALREADY_HIT;
         }
@@ -219,11 +170,11 @@ public class Game {
     private Status isPlayerHit(Coordinate coordinate, Player player) {
         int[][] playerBoard = player.getPlayerBoard().getBoard();
         System.out.println("[DEBUG] Coordinate: " + coordinate);
-        if (playerBoard[coordinate.row()][coordinate.column()] == 1) {
-            player.getPlayerBoard().getBoard()[coordinate.row()][coordinate.column()] = 2;
+        if (playerBoard[coordinate.getRow()][coordinate.getColumn()] == 1) {
+            player.getPlayerBoard().getBoard()[coordinate.getRow()][coordinate.getColumn()] = 2;
             System.out.println("You've been hit in " + coordinate + "!");
             return Status.HIT;
-        } else if (playerBoard[coordinate.row()][coordinate.column()] == 2) {
+        } else if (playerBoard[coordinate.getRow()][coordinate.getColumn()] == 2) {
             return Status.ALREADY_HIT;
         }
         System.out.println("Your opponent missed!");
@@ -232,23 +183,23 @@ public class Game {
 
     private void isShipDestroyed(Battleship battleship, Player player) {
         for (Coordinate coordinate : battleship.getCoordinates()) {
-            if (player.getPlayerBoard().getBoard()[coordinate.row()][coordinate.column()] == 1) {
+            if (player.getPlayerBoard().getBoard()[coordinate.getRow()][coordinate.getColumn()] == 1) {
                 return;
             }
         }
         battleship.setDestroyed(true);
-        System.out.println("You destroyed a ship!");
+        System.out.println("You destroyed the " + battleship + "!");
     }
 
     private void isPlayerShipDestroyed(Battleship battleship, Player player, AIAlgorithm aiAlgorithm) {
         for (Coordinate coordinate : battleship.getCoordinates()) {
-            if (player.getPlayerBoard().getBoard()[coordinate.row()][coordinate.column()] == 1) {
+            if (player.getPlayerBoard().getBoard()[coordinate.getRow()][coordinate.getColumn()] == 1) {
                 return;
             }
         }
         battleship.setDestroyed(true);
         aiAlgorithm.reset();
-        System.out.println("Your ship has been destroyed");
+        System.out.println("Your " +  battleship + " has been destroyed");
     }
 
     private boolean isDefeated(Player player) {
