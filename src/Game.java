@@ -2,9 +2,8 @@ import Players.*;
 import Util.Coordinate;
 import Util.Status;
 
-import java.util.List;
-import java.util.Random;
-import java.util.Scanner;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class Game {
 
@@ -75,8 +74,6 @@ public class Game {
             Coordinate coordinate = new Coordinate(row, column);
             List<Coordinate> previousShots = aiAlgorithm.getPreviousShots();
             Coordinate finalCoordinate = coordinate;
-            System.out.println("[DEBUG]: Shooting at " + coordinate);
-            System.out.println("[DEBUG]: Shot direction: " + aiAlgorithm.getNextHitDirection());
             if (previousShots.stream().anyMatch(coordinate1 -> coordinate1.equals(finalCoordinate))) {
                 continue;
             }
@@ -86,7 +83,12 @@ public class Game {
                     coordinate = getCoordinateAfterHit(aiAlgorithm, column, row, coordinate, previousShot);
                 } else if (previousShot.getStatus().equals(Status.DESTROYED)) {
                     coordinate = getCoordinateAfterDestroyedShip(coordinate, previousShots);
-                } else if (previousShots.stream().filter(Coordinate::isHit).toList().size() > 1) {
+                } else if (previousShots.stream().filter(Coordinate::isHit).toList().size() > 0) {
+                    aiAlgorithm.setNextHitDirection(null);
+                    Coordinate hit = previousShots.stream().filter(Coordinate::isHit).findFirst().get();
+                    List<Coordinate> eligibleCoordinates = getEligibleCoordinates(hit);
+
+                    coordinate = eligibleCoordinates.get(random.nextInt(eligibleCoordinates.size()));
 
                 }
             }
@@ -98,6 +100,50 @@ public class Game {
         }
     }
 
+    private List<Coordinate> getEligibleCoordinates(Coordinate hit) {
+        List<Coordinate> surroundingCoordinates = new ArrayList<>();
+        Coordinate c;
+        if (hit.getColumn()+1 <= 7) {
+            c = new Coordinate(hit.getRow(), hit.getColumn()+1);
+            switch (humanPlayer.getPlayerBoard().getBoard()[hit.getRow()][hit.getColumn()+1]) {
+                case 2 -> c.setStatus(Status.HIT);
+                case 3 -> c.setStatus(Status.DESTROYED);
+            }
+            surroundingCoordinates.add(c);
+        }
+        if (hit.getColumn()-1 >= 0) {
+            c = new Coordinate(hit.getRow(), hit.getColumn()-1);
+            switch (humanPlayer.getPlayerBoard().getBoard()[hit.getRow()][hit.getColumn()-1]) {
+                case 2 -> c.setStatus(Status.HIT);
+                case 3 -> c.setStatus(Status.DESTROYED);
+            }
+            surroundingCoordinates.add(c);
+        }
+        if (hit.getRow()+1 <= 7) {
+            c = new Coordinate(hit.getRow()+1, hit.getColumn());
+            switch (humanPlayer.getPlayerBoard().getBoard()[hit.getRow()+1][hit.getColumn()]) {
+                case 2 -> c.setStatus(Status.HIT);
+                case 3 -> c.setStatus(Status.DESTROYED);
+            }
+            surroundingCoordinates.add(c);
+        }
+        if (hit.getRow()-1 >= 0) {
+            c = new Coordinate(hit.getRow()-1, hit.getColumn());
+            switch (humanPlayer.getPlayerBoard().getBoard()[hit.getRow()-1][hit.getColumn()]) {
+                case 2 -> c.setStatus(Status.HIT);
+                case 3 -> c.setStatus(Status.DESTROYED);
+            }
+            surroundingCoordinates.add(c);
+        }
+        List<Coordinate> eligibleCoordinates = new ArrayList<>();
+        for (Coordinate surroundingCoordinate : surroundingCoordinates) {
+            if (surroundingCoordinate.getStatus() == null) {
+                eligibleCoordinates.add(surroundingCoordinate);
+            }
+        }
+        return eligibleCoordinates;
+    }
+
     private Coordinate getCoordinateAfterHit(AIAlgorithm aiAlgorithm, int column, int row, Coordinate coordinate, Coordinate previousShot) {
         Random random = new Random();
         boolean trying = true;
@@ -106,8 +152,8 @@ public class Game {
                 switch (aiAlgorithm.getNextHitDirection()) {
                     case "left" -> coordinate = new Coordinate(previousShot.getRow(), previousShot.getColumn()-1);
                     case "right" -> coordinate = new Coordinate(previousShot.getRow(), previousShot.getColumn()+1);
-                    case "up" -> coordinate = new Coordinate(previousShot.getRow()+1, previousShot.getColumn());
-                    case "down" -> coordinate = new Coordinate(previousShot.getRow()-1, previousShot.getColumn());
+                    case "up" -> coordinate = new Coordinate(previousShot.getRow()-1, previousShot.getColumn());
+                    case "down" -> coordinate = new Coordinate(previousShot.getRow()+1, previousShot.getColumn());
                 }
                 if (coordinate.getColumn() >= 0 && coordinate.getColumn() <= 7 && coordinate.getRow() >= 0 && coordinate.getRow() <= 7) {
                     trying = false;
@@ -191,19 +237,24 @@ public class Game {
      */
     private int getColumn(Scanner scanner) {
         boolean inputMatch = false;
-        int columnInt = 0;
+        int columnInt = -1;
         while (!inputMatch) {
-            System.out.println("Write in what column you want to shoot. A number from 1 to 7");
+            System.out.println("Write in what column you want to shoot. A letter from A to G");
             String column = scanner.nextLine();
-            try {
-                columnInt = Integer.parseInt(column) - 1;
-                if (columnInt <= 7) {
-                    inputMatch = true;
-                } else {
-                    System.out.println("You didn't write a number between 1 and 7");
+            if (column.toCharArray().length == 1) {
+                switch (column.toUpperCase(Locale.ROOT)) {
+                    case "A" -> columnInt = 0;
+                    case "B" -> columnInt = 1;
+                    case "C" -> columnInt = 2;
+                    case "D" -> columnInt = 3;
+                    case "E" -> columnInt = 4;
+                    case "F" -> columnInt = 5;
+                    case "G" -> columnInt = 6;
+                    default -> System.out.println("You didn't write a correct letter");
                 }
-            } catch (Exception e) {
-                System.out.println("You didn't write a number!");
+                if (columnInt >= 0) {
+                    inputMatch = true;
+                }
             }
         }
         return columnInt;

@@ -69,7 +69,9 @@ public class HumanPlayer extends Player {
                     case "G" -> columnInt = 6;
                     default -> System.out.println("You didn't write a correct letter");
                 }
-                inputMatch = true;
+                if (columnInt >= 0) {
+                    inputMatch = true;
+                }
             } else {
                 System.out.println("You didn't write one letter!");
             }
