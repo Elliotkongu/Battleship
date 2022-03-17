@@ -3,16 +3,19 @@ import Util.Coordinate;
 import Util.Status;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class Game {
 
     private final HumanPlayer humanPlayer;
     private final AiPlayer aiPlayer;
+    private final int boardHeight;
+    private final int boardWidth;
 
-    public Game(HumanPlayer humanPlayer, AiPlayer aiPlayer) {
+    public Game(HumanPlayer humanPlayer, AiPlayer aiPlayer, int boardHeight, int boardWidth) {
         this.humanPlayer = humanPlayer;
         this.aiPlayer = aiPlayer;
+        this.boardHeight = boardHeight;
+        this.boardWidth = boardWidth;
     }
 
     public void run() {
@@ -69,8 +72,8 @@ public class Game {
         Random random = new Random();
         boolean retry = true;
         while (retry) {
-            int column = random.nextInt(7);
-            int row = random.nextInt(7);
+            int column = random.nextInt(boardWidth);
+            int row = random.nextInt(boardHeight);
             Coordinate coordinate = new Coordinate(row, column);
             List<Coordinate> previousShots = aiAlgorithm.getPreviousShots();
             Coordinate finalCoordinate = coordinate;
@@ -102,38 +105,17 @@ public class Game {
 
     private List<Coordinate> getEligibleCoordinates(Coordinate hit) {
         List<Coordinate> surroundingCoordinates = new ArrayList<>();
-        Coordinate c;
-        if (hit.getColumn()+1 <= 7) {
-            c = new Coordinate(hit.getRow(), hit.getColumn()+1);
-            switch (humanPlayer.getPlayerBoard().getBoard()[hit.getRow()][hit.getColumn()+1]) {
-                case 2 -> c.setStatus(Status.HIT);
-                case 3 -> c.setStatus(Status.DESTROYED);
-            }
-            surroundingCoordinates.add(c);
+        if (hit.getColumn()+1 <= boardWidth) {
+            surroundCoordinate(hit.getRow(), hit.getColumn() + 1, surroundingCoordinates);
         }
         if (hit.getColumn()-1 >= 0) {
-            c = new Coordinate(hit.getRow(), hit.getColumn()-1);
-            switch (humanPlayer.getPlayerBoard().getBoard()[hit.getRow()][hit.getColumn()-1]) {
-                case 2 -> c.setStatus(Status.HIT);
-                case 3 -> c.setStatus(Status.DESTROYED);
-            }
-            surroundingCoordinates.add(c);
+            surroundCoordinate(hit.getRow(), hit.getColumn() - 1, surroundingCoordinates);
         }
-        if (hit.getRow()+1 <= 7) {
-            c = new Coordinate(hit.getRow()+1, hit.getColumn());
-            switch (humanPlayer.getPlayerBoard().getBoard()[hit.getRow()+1][hit.getColumn()]) {
-                case 2 -> c.setStatus(Status.HIT);
-                case 3 -> c.setStatus(Status.DESTROYED);
-            }
-            surroundingCoordinates.add(c);
+        if (hit.getRow()+1 <= boardHeight) {
+            surroundCoordinate(hit.getRow() + 1, hit.getColumn(), surroundingCoordinates);
         }
         if (hit.getRow()-1 >= 0) {
-            c = new Coordinate(hit.getRow()-1, hit.getColumn());
-            switch (humanPlayer.getPlayerBoard().getBoard()[hit.getRow()-1][hit.getColumn()]) {
-                case 2 -> c.setStatus(Status.HIT);
-                case 3 -> c.setStatus(Status.DESTROYED);
-            }
-            surroundingCoordinates.add(c);
+            surroundCoordinate(hit.getRow() - 1, hit.getColumn(), surroundingCoordinates);
         }
         List<Coordinate> eligibleCoordinates = new ArrayList<>();
         for (Coordinate surroundingCoordinate : surroundingCoordinates) {
@@ -142,6 +124,15 @@ public class Game {
             }
         }
         return eligibleCoordinates;
+    }
+
+    private void surroundCoordinate(int hit, int hit1, List<Coordinate> surroundingCoordinates) {
+        Coordinate c = new Coordinate(hit, hit1);
+        switch (humanPlayer.getPlayerBoard().getBoard()[hit][hit1]) {
+            case 2 -> c.setStatus(Status.HIT);
+            case 3 -> c.setStatus(Status.DESTROYED);
+        }
+        surroundingCoordinates.add(c);
     }
 
     private Coordinate getCoordinateAfterHit(AIAlgorithm aiAlgorithm, int column, int row, Coordinate coordinate, Coordinate previousShot) {
@@ -155,7 +146,7 @@ public class Game {
                     case "up" -> coordinate = new Coordinate(previousShot.getRow()-1, previousShot.getColumn());
                     case "down" -> coordinate = new Coordinate(previousShot.getRow()+1, previousShot.getColumn());
                 }
-                if (coordinate.getColumn() >= 0 && coordinate.getColumn() <= 7 && coordinate.getRow() >= 0 && coordinate.getRow() <= 7) {
+                if (coordinate.getColumn() >= 0 && coordinate.getColumn() <= boardWidth && coordinate.getRow() >= 0 && coordinate.getRow() <= boardHeight) {
                     trying = false;
                 } else {
                     coordinate = new Coordinate(row, column);
@@ -270,14 +261,14 @@ public class Game {
         int rowInt = 0;
         boolean inputMatch = false;
         while (!inputMatch) {
-            System.out.println("Write in what row you want to shoot. A number from 1 to 7");
+            System.out.println("Write in what row you want to shoot. A number from 1 to " + boardHeight);
             String row = scanner.nextLine();
             try {
                 rowInt = Integer.parseInt(row) - 1;
-                if (rowInt <= 7) {
+                if (rowInt <= boardHeight) {
                     inputMatch = true;
                 } else {
-                    System.out.println("You didn't choose a number between 1 and 7");
+                    System.out.println("You didn't choose a number between 1 and " + boardHeight);
                 }
             } catch (Exception e) {
                 System.out.println("You didn't write a number!");
