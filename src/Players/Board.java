@@ -27,7 +27,7 @@ public class Board {
                 return true;
             }
         }
-        for (Coordinate coordinate: battleshipCoordinates) {
+        for (Coordinate coordinate : battleshipCoordinates) {
             board[coordinate.getRow()][coordinate.getColumn()] = 1;
         }
         battleship.setCoordinates(battleshipCoordinates);
@@ -52,12 +52,13 @@ public class Board {
         }
         stringBuilder.append("\n");
         for (int i = 0; i < board.length; i++) {
-            stringBuilder.append(i+1).append("|");
-            for (int integer: board[i]) {
+            stringBuilder.append(i + 1).append("|");
+            for (int integer : board[i]) {
                 switch (integer) {
                     case 0 -> stringBuilder.append("O|");
                     case 1 -> stringBuilder.append("S|");
                     case 2 -> stringBuilder.append("H|");
+                    case 3 -> stringBuilder.append("D|");
                 }
             }
             stringBuilder.append("\n");

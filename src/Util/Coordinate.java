@@ -11,12 +11,6 @@ public class Coordinate {
         this.row = row;
     }
 
-    public Coordinate(int column, int row, Status status) {
-        this.column = column;
-        this.row = row;
-        this.status = status;
-    }
-
     public int getColumn() {
         return column;
     }

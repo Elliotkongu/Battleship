@@ -3,17 +3,21 @@ package Players;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Player {
+public abstract class Player {
     private Board playerBoard;
-    private List<Battleship> battleshipList;
+    private Board hitBoard;
+    private final List<Battleship> battleshipList;
 
     public Player() {
         this.battleshipList = new ArrayList<>();
     }
 
-    public Player(Board playerBoard) {
-        this.playerBoard = playerBoard;
-        this.battleshipList = new ArrayList<>();
+    public Board getHitBoard() {
+        return hitBoard;
+    }
+
+    public void setHitBoard(Board hitBoard) {
+        this.hitBoard = hitBoard;
     }
 
     public void setPlayerBoard(Board playerBoard) {

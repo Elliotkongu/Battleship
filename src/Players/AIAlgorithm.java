@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class AIAlgorithm {
-    private List<Coordinate> previousShots;
+    private final List<Coordinate> previousShots;
     private String nextHitDirection;
 
     public AIAlgorithm() {
@@ -30,7 +30,6 @@ public class AIAlgorithm {
     }
 
     public void reset() {
-        previousShots = new ArrayList<>();
         nextHitDirection = null;
     }
 }

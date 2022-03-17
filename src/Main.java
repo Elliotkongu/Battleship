@@ -1,14 +1,12 @@
-import Players.Player;
+import Players.AiPlayer;
+import Players.HumanPlayer;
 
 public class Main {
 
     public static void main(String[] args) {
-        Player player = new Player();
-        Player AI = new Player();
-        Setup setup = new Setup();
-        setup.setupPlayerBoard(player);
-        setup.setupAIBoard(AI);
-        Game game = new Game();
-        game.run(player, AI);
+        HumanPlayer player = new HumanPlayer();
+        AiPlayer ai = new AiPlayer();
+        Game game = new Game(player, ai);
+        game.run();
     }
 }
