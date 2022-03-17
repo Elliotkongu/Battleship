@@ -77,7 +77,9 @@ public class AiPlayer extends Player {
                 direction = directionArray[random.nextInt(4)];
                 attempts++;
                 continue;
-            } else if (attempts >= 5) {
+            }
+
+            if (attempts >= 5) {
                 return "failed";
             }
             inputMatch = true;

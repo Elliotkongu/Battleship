@@ -27,6 +27,10 @@ public class Coordinate {
         this.status = status;
     }
 
+    public boolean isHit() {
+        return this.status == Status.HIT;
+    }
+
     @Override
     public String toString() {
         char[] alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".toCharArray();

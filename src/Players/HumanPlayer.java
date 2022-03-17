@@ -1,5 +1,6 @@
 package Players;
 
+import java.util.Locale;
 import java.util.Scanner;
 
 public class HumanPlayer extends Player {
@@ -26,8 +27,8 @@ public class HumanPlayer extends Player {
                 battleship = new Battleship(shipNames[i - 1]);
             }
             int column = getColumn(scanner, battleship.getName());
-            int row = getRow(scanner);
-            String direction = getDirection(scanner, row, column, i);
+            int row = getRow(scanner, battleship.getName());
+            String direction = getDirection(scanner, row, column, i, battleship.getName());
             if (playerBoard.addBattleship(column, row, i, direction, battleship)) {
                 System.out.println("You can't layer a ship onto another ship!");
                 i--;
@@ -53,19 +54,24 @@ public class HumanPlayer extends Player {
      */
     private int getColumn(Scanner scanner, String name) {
         boolean inputMatch = false;
-        int columnInt = 0;
+        int columnInt = -1;
         while (!inputMatch) {
-            System.out.println("Write in what column you want your size " + name + " battleship. A number from 1 to 7");
+            System.out.println("Write in what column you want your " + name + ". A letter from A to G");
             String column = scanner.nextLine();
-            try {
-                columnInt = Integer.parseInt(column) - 1;
-                if (columnInt <= 6) {
-                    inputMatch = true;
-                } else {
-                    System.out.println("You didn't write a number between 1 to 7");
+            if (column.toCharArray().length == 1) {
+                switch (column.toUpperCase(Locale.ROOT)) {
+                    case "A" -> columnInt = 0;
+                    case "B" -> columnInt = 1;
+                    case "C" -> columnInt = 2;
+                    case "D" -> columnInt = 3;
+                    case "E" -> columnInt = 4;
+                    case "F" -> columnInt = 5;
+                    case "G" -> columnInt = 6;
+                    default -> System.out.println("You didn't write a correct letter");
                 }
-            } catch (Exception e) {
-                System.out.println("You didn't write a number!");
+                inputMatch = true;
+            } else {
+                System.out.println("You didn't write one letter!");
             }
         }
         return columnInt;
@@ -77,11 +83,11 @@ public class HumanPlayer extends Player {
      * @param scanner The scanner for reading the console input
      * @return Returns the row as an integer
      */
-    private int getRow(Scanner scanner) {
+    private int getRow(Scanner scanner, String name) {
         int rowInt = 0;
         boolean inputMatch = false;
         while (!inputMatch) {
-            System.out.println("Write in what row you want your battleship. A number from 1 to 7");
+            System.out.println("Write in what row you want your " + name + ". A number from 1 to 7");
             String row = scanner.nextLine();
             try {
                 rowInt = Integer.parseInt(row) - 1;
@@ -107,9 +113,9 @@ public class HumanPlayer extends Player {
      * @param length    The current length of the ship
      * @return The direction the player has chosen as a String
      */
-    private String getDirection(Scanner scanner, int rowInt, int columnInt, int length) {
+    private String getDirection(Scanner scanner, int rowInt, int columnInt, int length, String name) {
         boolean inputMatch;
-        System.out.println("Write in what direction you want your battleship. Left, Right, Up or Down");
+        System.out.println("Write in what direction you want your " + name +". Left, Right, Up or Down");
         inputMatch = false;
         String direction = "";
         while (!inputMatch) {
