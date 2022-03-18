@@ -61,19 +61,19 @@ public class AiPlayer extends Player {
         String direction = directionArray[random.nextInt(4)];
         int attempts = 0;
         while (!inputMatch) {
-            if (direction.equalsIgnoreCase("left") && columnInt < length) {
+            if (direction.equalsIgnoreCase("left") && columnInt < length && attempts <= 5) {
                 direction = directionArray[random.nextInt(4)];
                 attempts++;
                 continue;
-            } else if (direction.equalsIgnoreCase("right") && columnInt + length > 7) {
+            } else if (direction.equalsIgnoreCase("right") && columnInt + length > 7 && attempts <= 5) {
                 direction = directionArray[random.nextInt(4)];
                 attempts++;
                 continue;
-            } else if (direction.equalsIgnoreCase("up") && rowInt < length) {
+            } else if (direction.equalsIgnoreCase("up") && rowInt < length && attempts <= 5) {
                 direction = directionArray[random.nextInt(4)];
                 attempts++;
                 continue;
-            } else if (direction.equalsIgnoreCase("down") && rowInt + length > 7) {
+            } else if (direction.equalsIgnoreCase("down") && rowInt + length > 7 && attempts <= 5) {
                 direction = directionArray[random.nextInt(4)];
                 attempts++;
                 continue;

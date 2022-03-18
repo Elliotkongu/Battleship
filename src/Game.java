@@ -76,27 +76,40 @@ public class Game {
             int row = random.nextInt(boardHeight);
             Coordinate coordinate = new Coordinate(row, column);
             List<Coordinate> previousShots = aiAlgorithm.getPreviousShots();
-            Coordinate finalCoordinate = coordinate;
-            if (previousShots.stream().anyMatch(coordinate1 -> coordinate1.equals(finalCoordinate))) {
-                continue;
-            }
+            System.out.println("[DEBUG]: Coordinate: " + coordinate);
+            Coordinate previousShot = new Coordinate(-1, -1);
+            previousShot.setStatus(Status.MISSED);
             if (previousShots.size() > 0) {
-                Coordinate previousShot = previousShots.get(previousShots.size()-1);
+                previousShot = previousShots.get(previousShots.size() - 1);
                 if (previousShot.getStatus().equals(Status.HIT)) {
                     coordinate = getCoordinateAfterHit(aiAlgorithm, column, row, coordinate, previousShot);
                 } else if (previousShot.getStatus().equals(Status.DESTROYED)) {
                     coordinate = getCoordinateAfterDestroyedShip(coordinate, previousShots);
                 } else if (previousShots.stream().filter(Coordinate::isHit).toList().size() > 0) {
                     aiAlgorithm.setNextHitDirection(null);
-                    Coordinate hit = previousShots.stream().filter(Coordinate::isHit).findFirst().get();
-                    List<Coordinate> eligibleCoordinates = getEligibleCoordinates(hit);
-
-                    coordinate = eligibleCoordinates.get(random.nextInt(eligibleCoordinates.size()));
-
+                    List<Coordinate> previousHits = previousShots.stream().filter(Coordinate::isHit).toList();
+                    for (Coordinate hit : previousHits) {
+                        List<Coordinate> eligibleCoordinates = getEligibleCoordinates(hit);
+                        if (eligibleCoordinates.size() > 0) {
+                            coordinate = eligibleCoordinates.get(random.nextInt(eligibleCoordinates.size()));
+                            previousShot = hit;
+                            break;
+                        }
+                    }
                 }
             }
+            boolean alreadyHit = false;
+            for (Coordinate c: previousShots) {
+                if (c.equals(coordinate)) {
+                    alreadyHit = true;
+                    break;
+                }
+            }
+            if (alreadyHit) {
+                continue;
+            }
             aiAlgorithm.addShot(coordinate);
-            coordinate.setStatus(isHitOrMiss(aiAlgorithm, coordinate));
+            coordinate.setStatus(isHitOrMiss(aiAlgorithm, coordinate, previousShot));
             if (coordinate.getStatus().equals(Status.HIT) || coordinate.getStatus().equals(Status.MISSED)) {
                 retry = false;
             }
@@ -105,16 +118,16 @@ public class Game {
 
     private List<Coordinate> getEligibleCoordinates(Coordinate hit) {
         List<Coordinate> surroundingCoordinates = new ArrayList<>();
-        if (hit.getColumn()+1 <= boardWidth) {
+        if (hit.getColumn() + 1 <= boardWidth) {
             surroundCoordinate(hit.getRow(), hit.getColumn() + 1, surroundingCoordinates);
         }
-        if (hit.getColumn()-1 >= 0) {
+        if (hit.getColumn() - 1 >= 0) {
             surroundCoordinate(hit.getRow(), hit.getColumn() - 1, surroundingCoordinates);
         }
-        if (hit.getRow()+1 <= boardHeight) {
+        if (hit.getRow() + 1 <= boardHeight) {
             surroundCoordinate(hit.getRow() + 1, hit.getColumn(), surroundingCoordinates);
         }
-        if (hit.getRow()-1 >= 0) {
+        if (hit.getRow() - 1 >= 0) {
             surroundCoordinate(hit.getRow() - 1, hit.getColumn(), surroundingCoordinates);
         }
         List<Coordinate> eligibleCoordinates = new ArrayList<>();
@@ -137,29 +150,24 @@ public class Game {
 
     private Coordinate getCoordinateAfterHit(AIAlgorithm aiAlgorithm, int column, int row, Coordinate coordinate, Coordinate previousShot) {
         Random random = new Random();
-        boolean trying = true;
         if (aiAlgorithm.getNextHitDirection() != null) {
-            while (trying) {
-                switch (aiAlgorithm.getNextHitDirection()) {
-                    case "left" -> coordinate = new Coordinate(previousShot.getRow(), previousShot.getColumn()-1);
-                    case "right" -> coordinate = new Coordinate(previousShot.getRow(), previousShot.getColumn()+1);
-                    case "up" -> coordinate = new Coordinate(previousShot.getRow()-1, previousShot.getColumn());
-                    case "down" -> coordinate = new Coordinate(previousShot.getRow()+1, previousShot.getColumn());
-                }
-                if (coordinate.getColumn() >= 0 && coordinate.getColumn() <= boardWidth && coordinate.getRow() >= 0 && coordinate.getRow() <= boardHeight) {
-                    trying = false;
-                } else {
-                    coordinate = new Coordinate(row, column);
-                }
+            switch (aiAlgorithm.getNextHitDirection()) {
+                case "left" -> coordinate = new Coordinate(previousShot.getRow(), previousShot.getColumn() - 1);
+                case "right" -> coordinate = new Coordinate(previousShot.getRow(), previousShot.getColumn() + 1);
+                case "up" -> coordinate = new Coordinate(previousShot.getRow() - 1, previousShot.getColumn());
+                case "down" -> coordinate = new Coordinate(previousShot.getRow() + 1, previousShot.getColumn());
             }
         } else {
-            int direction = random.nextInt(4)+1;
+            int direction = random.nextInt(4) + 1;
             switch (direction) {
-                case 1 -> coordinate = new Coordinate(previousShot.getRow(), previousShot.getColumn()+1);
-                case 2 -> coordinate = new Coordinate(previousShot.getRow(), previousShot.getColumn()-1);
-                case 3 -> coordinate = new Coordinate(previousShot.getRow()+1, previousShot.getColumn());
-                case 4 -> coordinate = new Coordinate(previousShot.getRow()-1, previousShot.getColumn());
+                case 1 -> coordinate = new Coordinate(previousShot.getRow(), previousShot.getColumn() + 1);
+                case 2 -> coordinate = new Coordinate(previousShot.getRow(), previousShot.getColumn() - 1);
+                case 3 -> coordinate = new Coordinate(previousShot.getRow() + 1, previousShot.getColumn());
+                case 4 -> coordinate = new Coordinate(previousShot.getRow() - 1, previousShot.getColumn());
             }
+        }
+        if (coordinate.getColumn() < 0 || coordinate.getColumn() > boardWidth || coordinate.getRow() < 0 || coordinate.getRow() > boardHeight) {
+            coordinate = new Coordinate(row, column);
         }
         return coordinate;
     }
@@ -169,14 +177,14 @@ public class Game {
         boolean trying = true;
         while (trying) {
             List<Coordinate> previousHits = previousShots.stream().filter(Coordinate::isHit).toList();
-            int previousHitsIndex = random.nextInt(previousHits.size()-1);
+            int previousHitsIndex = random.nextInt(previousHits.size() - 1);
             Coordinate previousHit = previousHits.get(previousHitsIndex);
-            int directionIndex = random.nextInt(4)+1;
+            int directionIndex = random.nextInt(4) + 1;
             switch (directionIndex) {
-                case 1 -> coordinate = new Coordinate(previousHit.getRow(), previousHit.getColumn()+1);
-                case 2 -> coordinate = new Coordinate(previousHit.getRow(), previousHit.getColumn()-1);
-                case 3 -> coordinate = new Coordinate(previousHit.getRow()+1, previousHit.getColumn());
-                case 4 -> coordinate = new Coordinate(previousHit.getRow()-1, previousHit.getColumn());
+                case 1 -> coordinate = new Coordinate(previousHit.getRow(), previousHit.getColumn() + 1);
+                case 2 -> coordinate = new Coordinate(previousHit.getRow(), previousHit.getColumn() - 1);
+                case 3 -> coordinate = new Coordinate(previousHit.getRow() + 1, previousHit.getColumn());
+                case 4 -> coordinate = new Coordinate(previousHit.getRow() - 1, previousHit.getColumn());
             }
             System.out.println("[DEBUG]: new target at " + coordinate);
             Coordinate finalCoordinate1 = coordinate;
@@ -187,26 +195,18 @@ public class Game {
         return coordinate;
     }
 
-    private Status isHitOrMiss(AIAlgorithm aiAlgorithm, Coordinate coordinate) {
+    private Status isHitOrMiss(AIAlgorithm aiAlgorithm, Coordinate coordinate, Coordinate previousShot) {
         Status status = isPlayerHit(coordinate);
         coordinate.setStatus(status);
-        List<Coordinate> previousShots = aiAlgorithm.getPreviousShots();
-        Coordinate previousShot;
-        if (previousShots.size() > 1) {
-            previousShot = previousShots.get(previousShots.size()-2);
-        } else {
-            previousShot = new Coordinate(-1,-1);
-            previousShot.setStatus(Status.MISSED);
-        }
         if (status.equals(Status.HIT)) {
             if (aiAlgorithm.getNextHitDirection() == null && previousShot.getStatus().equals(Status.HIT)) {
-                if (previousShot.getColumn() == coordinate.getColumn()+1) {
+                if (previousShot.getColumn() == coordinate.getColumn() + 1) {
                     aiAlgorithm.setNextHitDirection("left");
-                } else if (previousShot.getColumn() == coordinate.getColumn()-1) {
+                } else if (previousShot.getColumn() == coordinate.getColumn() - 1) {
                     aiAlgorithm.setNextHitDirection("right");
-                } else if (previousShot.getRow() == coordinate.getRow()+1) {
+                } else if (previousShot.getRow() == coordinate.getRow() + 1) {
                     aiAlgorithm.setNextHitDirection("up");
-                } else if (previousShot.getRow() == coordinate.getRow()-1) {
+                } else if (previousShot.getRow() == coordinate.getRow() - 1) {
                     aiAlgorithm.setNextHitDirection("down");
                 }
             }
@@ -316,7 +316,7 @@ public class Game {
 
     private void isAIShipDestroyed(Battleship battleship) {
         if (isShipDestroyed(battleship, aiPlayer)) {
-            for (Coordinate c: battleship.getCoordinates()) {
+            for (Coordinate c : battleship.getCoordinates()) {
                 humanPlayer.getHitBoard().getBoard()[c.getRow()][c.getColumn()] = 3;
             }
             System.out.println("You destroyed the " + battleship + "!");
@@ -326,11 +326,12 @@ public class Game {
     private void isPlayerShipDestroyed(Battleship battleship, AIAlgorithm aiAlgorithm) {
         List<Coordinate> previousHits = aiAlgorithm.getPreviousShots().stream().filter(Coordinate::isHit).toList();
         if (isShipDestroyed(battleship, humanPlayer)) {
-            for (Coordinate c: battleship.getCoordinates()) {
+            for (Coordinate c : battleship.getCoordinates()) {
                 if (previousHits.stream().anyMatch(coordinate -> coordinate.equals(c))) {
                     previousHits.stream().filter(coordinate -> coordinate.equals(c)).findFirst().get().setStatus(Status.DESTROYED);
                 }
             }
+            aiAlgorithm.getPreviousShots().get(previousHits.size()-1).setStatus(Status.DESTROYED);
             aiAlgorithm.reset();
             System.out.println("Your " + battleship + " has been destroyed");
         }
