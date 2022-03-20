@@ -83,7 +83,7 @@ public class Game {
             if (previousShots.size() > 0) {
                 previousShot = previousShots.get(previousShots.size() - 1);
                 if (previousShot.getStatus().equals(Status.HIT)) {
-                    coordinate = getCoordinateAfterHit(aiAlgorithm, column, row, coordinate, previousShot, previousShots);
+                    coordinate = getCoordinateAfterHit(aiAlgorithm, row, column, coordinate, previousShot, previousShots);
                 } else if (previousShot.getStatus().equals(Status.DESTROYED)) {
                     coordinate = getCoordinateAfterDestroyedShip(coordinate, previousShots);
                 } else if (previousShots.stream().filter(Coordinate::isHit).toList().size() > 0) {
@@ -150,7 +150,7 @@ public class Game {
         surroundingCoordinates.add(c);
     }
 
-    private Coordinate getCoordinateAfterHit(AIAlgorithm aiAlgorithm, int column, int row, Coordinate coordinate, Coordinate previousShot, List<Coordinate> previousShots) {
+    private Coordinate getCoordinateAfterHit(AIAlgorithm aiAlgorithm, int row, int column, Coordinate coordinate, Coordinate previousShot, List<Coordinate> previousShots) {
         Random random = new Random();
         List<Coordinate> eligibleCoordinates = getEligibleCoordinates(previousShot, previousShots);
         if (aiAlgorithm.getNextHitDirection() != null) {
@@ -160,12 +160,22 @@ public class Game {
                 case "up" -> coordinate = new Coordinate(previousShot.getRow() - 1, previousShot.getColumn());
                 case "down" -> coordinate = new Coordinate(previousShot.getRow() + 1, previousShot.getColumn());
             }
+            if (!eligibleCoordinates.contains(coordinate)) {
+                int direction = random.nextInt(eligibleCoordinates.size());
+                coordinate = eligibleCoordinates.get(direction);
+            }
         } else {
             int direction = random.nextInt(eligibleCoordinates.size());
             coordinate = eligibleCoordinates.get(direction);
         }
         if (previousShots.contains(coordinate)) {
-            coordinate = new Coordinate(row, column);
+            for (Coordinate c :eligibleCoordinates) {
+                if (!previousShots.contains(c)) {
+                    coordinate = c;
+                    break;
+                }
+                coordinate = new Coordinate(row, column);
+            }
         }
         return coordinate;
     }
