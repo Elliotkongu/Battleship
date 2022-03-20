@@ -59,6 +59,7 @@ public class Board {
                     case 1 -> stringBuilder.append("S|");
                     case 2 -> stringBuilder.append("H|");
                     case 3 -> stringBuilder.append("D|");
+                    case 4 -> stringBuilder.append("X|");
                 }
             }
             stringBuilder.append("\n");
