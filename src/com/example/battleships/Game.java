@@ -1,10 +1,12 @@
-import Players.*;
-import Players.Ai.AiAlgorithm;
-import Players.Ai.AiPlayer;
-import Players.Common.Battleship;
-import Players.Common.Player;
-import Util.Coordinate;
-import Util.Status;
+package com.example.battleships;
+
+import com.example.battleships.Players.Ai.AiAlgorithm;
+import com.example.battleships.Players.Ai.AiPlayer;
+import com.example.battleships.Players.Common.Battleship;
+import com.example.battleships.Players.Common.Player;
+import com.example.battleships.Players.HumanPlayer;
+import com.example.battleships.Util.Coordinate;
+import com.example.battleships.Util.Status;
 
 import java.util.*;
 

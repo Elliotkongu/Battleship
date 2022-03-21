@@ -1,6 +1,6 @@
-package Players.Common;
+package com.example.battleships.Players.Common;
 
-import Util.Coordinate;
+import com.example.battleships.Util.Coordinate;
 
 import java.util.List;
 

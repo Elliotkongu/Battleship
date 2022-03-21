@@ -1,8 +1,8 @@
-package Players.Ai;
+package com.example.battleships.Players.Ai;
 
-import Players.Common.Battleship;
-import Players.Common.Board;
-import Players.Common.Player;
+import com.example.battleships.Players.Common.Battleship;
+import com.example.battleships.Players.Common.Board;
+import com.example.battleships.Players.Common.Player;
 
 import java.util.Random;
 

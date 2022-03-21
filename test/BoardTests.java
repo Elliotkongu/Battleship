@@ -1,6 +1,6 @@
-import Players.Common.Battleship;
-import Players.Common.Board;
-import Util.Coordinate;
+import com.example.battleships.Players.Common.Battleship;
+import com.example.battleships.Players.Common.Board;
+import com.example.battleships.Util.Coordinate;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

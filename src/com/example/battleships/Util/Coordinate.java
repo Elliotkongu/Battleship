@@ -1,4 +1,4 @@
-package Util;
+package com.example.battleships.Util;
 
 /**
  * Coordinate corresponding to the integer values in the boards 2D array

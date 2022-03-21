@@ -1,4 +1,4 @@
-package Players.Common;
+package com.example.battleships.Players.Common;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,4 +1,4 @@
-package Util;
+package com.example.battleships.Util;
 
 /**
  * The possible statuses of Coordinates

@@ -1,6 +1,6 @@
-package Players.Ai;
+package com.example.battleships.Players.Ai;
 
-import Util.Coordinate;
+import com.example.battleships.Util.Coordinate;
 
 import java.util.ArrayList;
 import java.util.List;

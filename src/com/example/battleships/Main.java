@@ -1,5 +1,7 @@
-import Players.Ai.AiPlayer;
-import Players.HumanPlayer;
+package com.example.battleships;
+
+import com.example.battleships.Players.Ai.AiPlayer;
+import com.example.battleships.Players.HumanPlayer;
 
 public class Main {
 

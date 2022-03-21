@@ -1,8 +1,9 @@
-import Players.Ai.AiAlgorithm;
-import Players.Ai.AiPlayer;
-import Players.Common.Battleship;
-import Players.HumanPlayer;
-import Util.Coordinate;
+import com.example.battleships.Players.Ai.AiAlgorithm;
+import com.example.battleships.Players.Ai.AiPlayer;
+import com.example.battleships.Players.Common.Battleship;
+import com.example.battleships.Players.HumanPlayer;
+import com.example.battleships.Util.Coordinate;
+import com.example.battleships.Game;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
