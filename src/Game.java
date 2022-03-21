@@ -194,17 +194,14 @@ public class Game {
         Random random = new Random();
         List<Coordinate> eligibleCoordinates = getEligibleCoordinates(previousShot, previousShots);
         if (aiAlgorithm.getNextHitDirection() != null) {
-            switch (aiAlgorithm.getNextHitDirection()) {
+            switch (aiAlgorithm.getNextHitDirection().toLowerCase(Locale.ROOT)) {
                 case "left" -> coordinate = new Coordinate(previousShot.getRow(), previousShot.getColumn() - 1);
                 case "right" -> coordinate = new Coordinate(previousShot.getRow(), previousShot.getColumn() + 1);
                 case "up" -> coordinate = new Coordinate(previousShot.getRow() - 1, previousShot.getColumn());
                 case "down" -> coordinate = new Coordinate(previousShot.getRow() + 1, previousShot.getColumn());
             }
-            if (!eligibleCoordinates.contains(coordinate)) {
-                int direction = random.nextInt(eligibleCoordinates.size());
-                coordinate = eligibleCoordinates.get(direction);
-            }
-        } else {
+        }
+        if (!eligibleCoordinates.contains(coordinate)) {
             int direction = random.nextInt(eligibleCoordinates.size());
             coordinate = eligibleCoordinates.get(direction);
         }
