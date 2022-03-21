@@ -8,7 +8,6 @@ import java.util.Random;
 
 public class AiPlayer extends Player {
 
-    private AiAlgorithm aiAlgorithm;
 
     public AiPlayer() {
         setupAIBoard();
@@ -48,11 +47,6 @@ public class AiPlayer extends Player {
             }
         }
         setPlayerBoard(aiBoard);
-        aiAlgorithm = new AiAlgorithm();
-    }
-
-    public AiAlgorithm getAiAlgorithm() {
-        return aiAlgorithm;
     }
 
     /**

@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class GameTests {
 
@@ -83,5 +84,78 @@ public class GameTests {
         game.isPlayerShipDestroyed(battleship);
         //Then
         assertFalse(battleship.isDestroyed());
+    }
+
+    @Test
+    void isAiShipDestroyedTrueTest() {
+        //Given
+        Battleship battleship = new Battleship("Test Boat");
+        List<Coordinate> coordinates = new ArrayList<>();
+        coordinates.add(new Coordinate(0,0));
+        coordinates.add(new Coordinate(1,0));
+        battleship.setCoordinates(coordinates);
+        aiPlayer.getPlayerBoard().getBoard()[0][0] = 2;
+        aiPlayer.getPlayerBoard().getBoard()[1][0] = 2;
+        aiPlayer.addBattleship(battleship);
+        //When
+        game.isAIShipDestroyed(battleship);
+        //Then
+        assertTrue(battleship.isDestroyed());
+    }
+
+    @Test
+    void isAiShipDestroyedFalseTest() {
+        //Given
+        Battleship battleship = new Battleship("Test Boat");
+        List<Coordinate> coordinates = new ArrayList<>();
+        coordinates.add(new Coordinate(0,0));
+        coordinates.add(new Coordinate(1,0));
+        battleship.setCoordinates(coordinates);
+        aiPlayer.getPlayerBoard().getBoard()[0][0] = 1;
+        aiPlayer.getPlayerBoard().getBoard()[1][0] = 1;
+        aiPlayer.addBattleship(battleship);
+        //When
+        game.isAIShipDestroyed(battleship);
+        //Then
+        assertFalse(battleship.isDestroyed());
+    }
+
+    @Test
+    void isHumanPlayerDefeated() {
+        //Given
+        Battleship b1 = new Battleship("Test Boat");
+        Battleship b2 = new Battleship("Test Destroyer");
+        Battleship b3 = new Battleship("Test Submarine");
+        Battleship b4 = new Battleship("Test Battleship");
+        Battleship b5 = new Battleship("Test Carrier");
+        b1.setDestroyed(true);
+        b2.setDestroyed(true);
+        b3.setDestroyed(true);
+        b4.setDestroyed(true);
+        b5.setDestroyed(true);
+        humanPlayer.addBattleship(b1);
+        humanPlayer.addBattleship(b2);
+        humanPlayer.addBattleship(b3);
+        humanPlayer.addBattleship(b4);
+        humanPlayer.addBattleship(b5);
+        //Then
+        assertTrue(game.isDefeated(humanPlayer));
+    }
+
+    @Test
+    void isHumanPlayerNotDefeated() {
+        //Given
+        Battleship b1 = new Battleship("Test Boat");
+        Battleship b2 = new Battleship("Test Destroyer");
+        Battleship b3 = new Battleship("Test Submarine");
+        Battleship b4 = new Battleship("Test Battleship");
+        Battleship b5 = new Battleship("Test Carrier");
+        humanPlayer.addBattleship(b1);
+        humanPlayer.addBattleship(b2);
+        humanPlayer.addBattleship(b3);
+        humanPlayer.addBattleship(b4);
+        humanPlayer.addBattleship(b5);
+        //Then
+        assertFalse(game.isDefeated(humanPlayer));
     }
 }

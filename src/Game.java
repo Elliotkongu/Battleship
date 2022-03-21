@@ -319,7 +319,7 @@ public class Game {
      * Checks if the AIs ship has been destroyed and change the status of Coordinates if it has been
      * @param battleship The battleship to be checked
      */
-    private void isAIShipDestroyed(Battleship battleship) {
+    public void isAIShipDestroyed(Battleship battleship) {
         if (isShipDestroyed(battleship, aiPlayer)) {
             for (Coordinate c : battleship.getCoordinates()) {
                 humanPlayer.getHitBoard().getBoard()[c.getRow()][c.getColumn()] = 3;
@@ -370,7 +370,7 @@ public class Game {
      * @param player The player to check
      * @return A boolean of whether the player has been defeated or not: true if they have, false if not
      */
-    private boolean isDefeated(Player player) {
+    public boolean isDefeated(Player player) {
         List<Battleship> destroyedBattleships = player.getBattleshipList().stream().filter(Battleship::isDestroyed).toList();
         return destroyedBattleships.size() == 5;
     }
