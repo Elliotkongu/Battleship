@@ -26,8 +26,8 @@ public class HumanPlayer extends Player {
             } else {
                 battleship = new Battleship(shipNames[i - 1]);
             }
-            int column = getColumn(scanner, battleship.getName());
-            int row = getRow(scanner, battleship.getName());
+            int column = getColumn(scanner, "Write in what column you want your " + battleship.getName() + ". A letter from A to G");
+            int row = getRow(scanner, "Write in what row you want your " + battleship.getName() + ". A number from 1 to 7");
             String direction = getDirection(scanner, row, column, i, battleship.getName());
             if (playerBoard.addBattleship(column, row, i, direction, battleship)) {
                 System.out.println("You can't layer a ship onto another ship!");
@@ -48,15 +48,15 @@ public class HumanPlayer extends Player {
     /**
      * Gets the column where the human player wants to place their ship
      *
-     * @param scanner The scanner for reading the console input
-     * @param name    The current name of the ship
+     * @param scanner   The scanner for reading the console input
+     * @param message   The message sent
      * @return Returns the column as an integer
      */
-    private int getColumn(Scanner scanner, String name) {
+    public int getColumn(Scanner scanner, String message) {
         boolean inputMatch = false;
         int columnInt = -1;
         while (!inputMatch) {
-            System.out.println("Write in what column you want your " + name + ". A letter from A to G");
+            System.out.println(message);
             String column = scanner.nextLine();
             if (column.toCharArray().length == 1) {
                 switch (column.toUpperCase(Locale.ROOT)) {
@@ -85,11 +85,11 @@ public class HumanPlayer extends Player {
      * @param scanner The scanner for reading the console input
      * @return Returns the row as an integer
      */
-    private int getRow(Scanner scanner, String name) {
+    public int getRow(Scanner scanner, String message) {
         int rowInt = 0;
         boolean inputMatch = false;
         while (!inputMatch) {
-            System.out.println("Write in what row you want your " + name + ". A number from 1 to 7");
+            System.out.println(message);
             String row = scanner.nextLine();
             try {
                 rowInt = Integer.parseInt(row) - 1;

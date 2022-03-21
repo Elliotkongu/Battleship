@@ -21,7 +21,7 @@ public class Game {
     public void run() {
         AIAlgorithm aiAlgorithm = new AIAlgorithm();
         while (true) {
-            printBoards(humanPlayer);
+            printBoards();
             playerShoot();
             if (isDefeated(aiPlayer)) {
                 System.out.println("You won the game");
@@ -32,26 +32,23 @@ public class Game {
                 System.out.println("You lost the game");
                 break;
             }
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-            }
         }
     }
 
-    private void printBoards(Player player) {
+    private void printBoards() {
         String format = "%-40s%s%n";
-        System.out.printf(format, player.getPlayerBoard(), "");
-        System.out.printf(format, player.getHitBoard(), "");
+        System.out.println("Player Board");
+        System.out.printf(format, humanPlayer.getPlayerBoard(), "");
+        System.out.println("Opponents Board");
+        System.out.printf(format, humanPlayer.getHitBoard(), "");
     }
 
     private void playerShoot() {
         Scanner scanner = new Scanner(System.in);
         boolean retry = true;
         while (retry) {
-            int column = getColumn(scanner);
-            int row = getRow(scanner);
+            int column = humanPlayer.getColumn(scanner, "Write in what column you want to shoot. A letter from A to G");
+            int row = humanPlayer.getRow(scanner, "Write in what row you want to shoot. A number from 1 to " + boardHeight);
             Coordinate coordinate = new Coordinate(row, column);
             Status status = isAiHit(coordinate, humanPlayer.getHitBoard());
             if (status.equals(Status.HIT)) {
@@ -77,7 +74,6 @@ public class Game {
             int row = random.nextInt(boardHeight);
             Coordinate coordinate = new Coordinate(row, column);
             List<Coordinate> previousShots = aiAlgorithm.getPreviousShots();
-            System.out.println("[DEBUG]: Coordinate: " + coordinate);
             Coordinate previousShot = new Coordinate(-1, -1);
             previousShot.setStatus(Status.MISSED);
             if (previousShots.size() > 0) {
@@ -115,6 +111,11 @@ public class Game {
             if (!coordinate.getStatus().equals(Status.ALREADY_HIT)) {
                 retry = false;
             }
+        }
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
         }
     }
 
@@ -184,10 +185,13 @@ public class Game {
         Random random = new Random();
         List<Coordinate> previousHits = previousShots.stream().filter(Coordinate::isHit).toList();
         if (previousHits.size() > 0) {
-            Coordinate previousHit = previousHits.get(0);
-            List<Coordinate> eligibleCoordinates = getEligibleCoordinates(previousHit, previousShots);
-            coordinate = eligibleCoordinates.get(random.nextInt(eligibleCoordinates.size()) - 1);
-            System.out.println("[DEBUG]: new target at " + coordinate);
+            for (Coordinate previousHit : previousHits) {
+                List<Coordinate> eligibleCoordinates = getEligibleCoordinates(previousHit, previousShots);
+                if (eligibleCoordinates.size() > 0) {
+                    coordinate = eligibleCoordinates.get(random.nextInt(eligibleCoordinates.size()));
+                    break;
+                }
+            }
         }
         return coordinate;
     }
@@ -222,63 +226,6 @@ public class Game {
     }
 
     /**
-     * Gets the column where the human player wants to shoot
-     *
-     * @param scanner The scanner for reading the console input
-     * @return Returns the column as an integer
-     */
-    private int getColumn(Scanner scanner) {
-        boolean inputMatch = false;
-        int columnInt = -1;
-        while (!inputMatch) {
-            System.out.println("Write in what column you want to shoot. A letter from A to G");
-            String column = scanner.nextLine();
-            if (column.toCharArray().length == 1) {
-                switch (column.toUpperCase(Locale.ROOT)) {
-                    case "A" -> columnInt = 0;
-                    case "B" -> columnInt = 1;
-                    case "C" -> columnInt = 2;
-                    case "D" -> columnInt = 3;
-                    case "E" -> columnInt = 4;
-                    case "F" -> columnInt = 5;
-                    case "G" -> columnInt = 6;
-                    default -> System.out.println("You didn't write a correct letter");
-                }
-                if (columnInt >= 0) {
-                    inputMatch = true;
-                }
-            }
-        }
-        return columnInt;
-    }
-
-    /**
-     * Gets the row where the human player wants to place their ship
-     *
-     * @param scanner The scanner for reading the console input
-     * @return Returns the row as an integer
-     */
-    private int getRow(Scanner scanner) {
-        int rowInt = 0;
-        boolean inputMatch = false;
-        while (!inputMatch) {
-            System.out.println("Write in what row you want to shoot. A number from 1 to " + boardHeight);
-            String row = scanner.nextLine();
-            try {
-                rowInt = Integer.parseInt(row) - 1;
-                if (rowInt <= boardHeight) {
-                    inputMatch = true;
-                } else {
-                    System.out.println("You didn't choose a number between 1 and " + boardHeight);
-                }
-            } catch (Exception e) {
-                System.out.println("You didn't write a number!");
-            }
-        }
-        return rowInt;
-    }
-
-    /**
      * Checks whether the coordinate is a hit, miss or already hit
      *
      * @param coordinate     The coordinate to be checked
@@ -302,7 +249,6 @@ public class Game {
 
     private Status isPlayerHit(Coordinate coordinate) {
         int[][] playerBoard = humanPlayer.getPlayerBoard().getBoard();
-        System.out.println("[DEBUG] Coordinate: " + coordinate);
         if (playerBoard[coordinate.getRow()][coordinate.getColumn()] == 1) {
             humanPlayer.getPlayerBoard().getBoard()[coordinate.getRow()][coordinate.getColumn()] = 2;
             System.out.println("You've been hit in " + coordinate + "!");
