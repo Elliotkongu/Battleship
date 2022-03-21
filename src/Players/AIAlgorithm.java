@@ -5,6 +5,9 @@ import Util.Coordinate;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * All things needed for the AIs algorithm to function.
+ */
 public class AIAlgorithm {
     private final List<Coordinate> previousShots;
     private String nextHitDirection;

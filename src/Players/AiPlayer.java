@@ -13,15 +13,15 @@ public class AiPlayer extends Player {
      * The ship sizes are 2,3,3,4,5
      */
     public void setupAIBoard() {
-        boolean twoThrees = false;
+        boolean twoThrees = false; //Since there are two boats with the same size we'll need to repeat size 3
         Random random = new Random();
         String[] shipNames = new String[]{"Patrol Boat", "Submarine", "Destroyer", "Battleship", "Carrier"};
-        Board player2Board = new Board(new int[7][7]);
-        for (int i = 2; i <= 5; i++) {
+        Board aiBoard = new Board(new int[7][7]);
+        for (int i = 2; i <= 5; i++) { //Loop through the sizes of ships
             int column = random.nextInt(7);
             int row = random.nextInt(7);
             String direction = getAIDirection(row, column, i);
-            if (direction.equalsIgnoreCase("failed")) {
+            if (direction.equalsIgnoreCase("failed")) { //If the ship doesn't fit any of the 4 directions the AI retries
                 i--;
                 continue;
             }
@@ -31,17 +31,17 @@ public class AiPlayer extends Player {
             } else {
                 battleship = new Battleship(shipNames[i - 1]);
             }
-            if (player2Board.addBattleship(column, row, i, direction, battleship)) {
+            if (aiBoard.addBattleship(column, row, i, direction, battleship)) { //If the battleship couldn't be added for whatever reason the AI retries
                 i--;
                 continue;
             }
-            addBattleship(battleship);
-            if (i == 3 && !twoThrees) {
+            addBattleship(battleship); //Add the battleship to the list of ships
+            if (i == 3 && !twoThrees) { //Loop the third size again
                 twoThrees = true;
                 i--;
             }
         }
-        setPlayerBoard(player2Board);
+        setPlayerBoard(aiBoard);
     }
 
     /**

@@ -3,21 +3,15 @@ package Players;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Contains things that are shared between both the AI player and the Human player.
+ */
 public abstract class Player {
     private Board playerBoard;
-    private Board hitBoard;
     private final List<Battleship> battleshipList;
 
     public Player() {
         this.battleshipList = new ArrayList<>();
-    }
-
-    public Board getHitBoard() {
-        return hitBoard;
-    }
-
-    public void setHitBoard(Board hitBoard) {
-        this.hitBoard = hitBoard;
     }
 
     public void setPlayerBoard(Board playerBoard) {

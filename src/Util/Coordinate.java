@@ -1,5 +1,9 @@
 package Util;
 
+/**
+ * Coordinate corresponding to the integer values in the boards 2D array
+ * toString prints column out as a letter and equals checks that both column and row are the same
+ */
 public class Coordinate {
 
     private final int column;

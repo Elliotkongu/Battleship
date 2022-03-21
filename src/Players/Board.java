@@ -5,6 +5,11 @@ import Util.Coordinate;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * A board of coordinates for the players to put their ships on and shoot.
+ * Has a method for adding a battleship.
+ * toString prints out with letters above each column and a number next to each row.
+ */
 public class Board {
     int[][] board;
 
@@ -12,6 +17,15 @@ public class Board {
         this.board = board;
     }
 
+    /**
+     * Attempts to add the battleship to the board
+     * @param column     The chosen column
+     * @param row        The chosen row
+     * @param length     The length of the battleship
+     * @param direction  The direction to place the battleship in
+     * @param battleship The battleship to be placed
+     * @return A boolean of whether the battleship could be placed or not: true if it failed, false if it succeeded
+     */
     public boolean addBattleship(int column, int row, int length, String direction, Battleship battleship) {
         List<Coordinate> battleshipCoordinates = new ArrayList<>();
         for (int i = 0; i < length; i++) {
@@ -38,6 +52,12 @@ public class Board {
         return board;
     }
 
+    /**
+     * Checks if the Coordinate is occupied
+     * @param column The chosen column
+     * @param row    The chosen row
+     * @return A boolean of wheter it's occupied or not: true if it isn't, false if it is
+     */
     private boolean isNotOccupied(int column, int row) {
         return board[row][column] != 1;
     }

@@ -5,6 +5,7 @@ import java.util.Scanner;
 
 public class HumanPlayer extends Player {
 
+    private Board hitBoard;
 
     public HumanPlayer() {
         setupPlayerBoard();
@@ -15,7 +16,7 @@ public class HumanPlayer extends Player {
      * The ship sizes are 2,3,3,4,5 and are placed in size order
      */
     public void setupPlayerBoard() {
-        boolean twoThrees = false;
+        boolean twoThrees = false; //Since there are two boats with the same size we'll need to repeat size 3
         Scanner scanner = new Scanner(System.in);
         Board playerBoard = new Board(new int[7][7]);
         String[] shipNames = new String[]{"Patrol Boat", "Submarine", "Destroyer", "Battleship", "Carrier"};
@@ -28,7 +29,7 @@ public class HumanPlayer extends Player {
             }
             int column = getColumn(scanner, "Write in what column you want your " + battleship.getName() + ". A letter from A to G");
             int row = getRow(scanner, "Write in what row you want your " + battleship.getName() + ". A number from 1 to 7");
-            String direction = getDirection(scanner, row, column, i, battleship.getName());
+            String direction = getDirection(scanner, row, column, i, battleship.getName()); //Gets the direction and verifies that there's enough space
             if (playerBoard.addBattleship(column, row, i, direction, battleship)) {
                 System.out.println("You can't layer a ship onto another ship!");
                 i--;
@@ -42,14 +43,14 @@ public class HumanPlayer extends Player {
             System.out.println(playerBoard);
         }
         setPlayerBoard(playerBoard);
-        setHitBoard(new Board(new int[7][7]));
+        this.hitBoard = new Board(new int[7][7]);
     }
 
     /**
      * Gets the column where the human player wants to place their ship
      *
      * @param scanner   The scanner for reading the console input
-     * @param message   The message sent
+     * @param message   The message to be printed out
      * @return Returns the column as an integer
      */
     public int getColumn(Scanner scanner, String message) {
@@ -58,7 +59,7 @@ public class HumanPlayer extends Player {
         while (!inputMatch) {
             System.out.println(message);
             String column = scanner.nextLine();
-            if (column.toCharArray().length == 1) {
+            if (column.toCharArray().length == 1) { //Make sure the player writes one letter
                 switch (column.toUpperCase(Locale.ROOT)) {
                     case "A" -> columnInt = 0;
                     case "B" -> columnInt = 1;
@@ -83,6 +84,7 @@ public class HumanPlayer extends Player {
      * Gets the row where the human player wants to place their ship
      *
      * @param scanner The scanner for reading the console input
+     * @param message The message to the printed out
      * @return Returns the row as an integer
      */
     public int getRow(Scanner scanner, String message) {
@@ -142,5 +144,9 @@ public class HumanPlayer extends Player {
             inputMatch = true;
         }
         return direction;
+    }
+
+    public Board getHitBoard() {
+        return hitBoard;
     }
 }
