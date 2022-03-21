@@ -1,4 +1,8 @@
 import Players.*;
+import Players.Ai.AiAlgorithm;
+import Players.Ai.AiPlayer;
+import Players.Common.Battleship;
+import Players.Common.Player;
 import Util.Coordinate;
 import Util.Status;
 
@@ -8,7 +12,7 @@ public class Game {
 
     private final HumanPlayer humanPlayer;
     private final AiPlayer aiPlayer;
-    private final AIAlgorithm aiAlgorithm;
+    private final AiAlgorithm aiAlgorithm;
     private final int boardHeight;
     private final int boardWidth;
 
@@ -17,7 +21,7 @@ public class Game {
         this.aiPlayer = aiPlayer;
         this.boardHeight = boardHeight;
         this.boardWidth = boardWidth;
-        this.aiAlgorithm = new AIAlgorithm();
+        this.aiAlgorithm = new AiAlgorithm();
     }
 
     public void run() {
@@ -328,7 +332,7 @@ public class Game {
      * Check if the players ship has been destroyed and change the status of Coordinates if it has been
      * @param battleship The battleship to be checked
      */
-    private void isPlayerShipDestroyed(Battleship battleship) {
+    public void isPlayerShipDestroyed(Battleship battleship) {
         List<Coordinate> previousHits = aiAlgorithm.getPreviousShots().stream().filter(Coordinate::isHit).toList();
         if (isShipDestroyed(battleship, humanPlayer)) {
             for (Coordinate c : battleship.getCoordinates()) {
@@ -347,7 +351,7 @@ public class Game {
      * @param player The player who owns the ship
      * @return A boolean of whether the ship has been destroyed or not: true if it has, false if not
      */
-    private boolean isShipDestroyed(Battleship battleship, Player player) {
+    public boolean isShipDestroyed(Battleship battleship, Player player) {
         for (Coordinate coordinate : battleship.getCoordinates()) {
             if (player.getPlayerBoard().getBoard()[coordinate.getRow()][coordinate.getColumn()] == 1) {
                 return false;

@@ -1,4 +1,4 @@
-package Players;
+package Players.Common;
 
 import Util.Coordinate;
 

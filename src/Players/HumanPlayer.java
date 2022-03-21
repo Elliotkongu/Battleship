@@ -1,5 +1,9 @@
 package Players;
 
+import Players.Common.Battleship;
+import Players.Common.Board;
+import Players.Common.Player;
+
 import java.util.Locale;
 import java.util.Scanner;
 

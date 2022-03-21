@@ -1,8 +1,14 @@
-package Players;
+package Players.Ai;
+
+import Players.Common.Battleship;
+import Players.Common.Board;
+import Players.Common.Player;
 
 import java.util.Random;
 
 public class AiPlayer extends Player {
+
+    private AiAlgorithm aiAlgorithm;
 
     public AiPlayer() {
         setupAIBoard();
@@ -42,6 +48,11 @@ public class AiPlayer extends Player {
             }
         }
         setPlayerBoard(aiBoard);
+        aiAlgorithm = new AiAlgorithm();
+    }
+
+    public AiAlgorithm getAiAlgorithm() {
+        return aiAlgorithm;
     }
 
     /**

@@ -1,4 +1,4 @@
-package Players;
+package Players.Ai;
 
 import Util.Coordinate;
 
@@ -8,11 +8,11 @@ import java.util.List;
 /**
  * All things needed for the AIs algorithm to function.
  */
-public class AIAlgorithm {
+public class AiAlgorithm {
     private final List<Coordinate> previousShots;
     private String nextHitDirection;
 
-    public AIAlgorithm() {
+    public AiAlgorithm() {
         previousShots = new ArrayList<>();
     }
 

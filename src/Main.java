@@ -1,4 +1,4 @@
-import Players.AiPlayer;
+import Players.Ai.AiPlayer;
 import Players.HumanPlayer;
 
 public class Main {
