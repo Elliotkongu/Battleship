@@ -63,8 +63,8 @@ public class Game {
         Scanner scanner = new Scanner(System.in);
         boolean retry = true;
         while (retry) {
-            int column = humanPlayer.getColumn(scanner, "Write in what column you want to shoot. A letter from A to G");
-            int row = humanPlayer.getRow(scanner, "Write in what row you want to shoot. A number from 1 to " + boardHeight);
+            int column = humanPlayer.getColumn(scanner, "Write in what column you want to shoot. A letter from A to G"); //Verifies the players input to be a relevant column
+            int row = humanPlayer.getRow(scanner, "Write in what row you want to shoot. A number from 1 to " + boardHeight); //Verifies the players input to be a relevant row
             Coordinate coordinate = new Coordinate(row, column);
             Status status = isAiHit(coordinate);
             if (status.equals(Status.HIT)) {
@@ -282,17 +282,17 @@ public class Game {
      * @return The status of the shot: HIT, MISSED or ALREADY_HIT
      */
     private Status isAiHit(Coordinate coordinate) {
-        int[][] playerBoard = aiPlayer.getPlayerBoard().getBoard();
-        if (playerBoard[coordinate.getRow()][coordinate.getColumn()] == 1) {
-            aiPlayer.getPlayerBoard().getBoard()[coordinate.getRow()][coordinate.getColumn()] = 2;
-            humanPlayer.getHitBoard().getBoard()[coordinate.getRow()][coordinate.getColumn()] = 2;
+        int[][] aiBoard = aiPlayer.getPlayerBoard().getBoard();
+        if (aiBoard[coordinate.getRow()][coordinate.getColumn()] == 1) { //If the coordinates on the AIs board have a state of 1 (meaning a ship is occupying the coordinates) it's a hit
+            aiPlayer.getPlayerBoard().getBoard()[coordinate.getRow()][coordinate.getColumn()] = 2; //Change to 2 (meaning a hit)
+            humanPlayer.getHitBoard().getBoard()[coordinate.getRow()][coordinate.getColumn()] = 2; //Change the players hit board as well so the player can see that they've hit
             System.out.println("You hit!");
             return Status.HIT;
-        } else if (playerBoard[coordinate.getRow()][coordinate.getColumn()] == 2) {
+        } else if (aiBoard[coordinate.getRow()][coordinate.getColumn()] == 2) { //Check if it's already been hit
             System.out.println("You've already hit that!");
             return Status.ALREADY_HIT;
         }
-        System.out.println("You missed!");
+        System.out.println("You missed!"); //The system will tell you that you've missed even if you hit a destroyed ship part
         return Status.MISSED;
     }
 
@@ -303,7 +303,7 @@ public class Game {
      */
     private Status isPlayerHit(Coordinate coordinate) {
         int[][] playerBoard = humanPlayer.getPlayerBoard().getBoard();
-        if (playerBoard[coordinate.getRow()][coordinate.getColumn()] == 1) {
+        if (playerBoard[coordinate.getRow()][coordinate.getColumn()] == 1) { //If the coordinates on the AIs board have a state of 1 (meaning a ship is occupying the coordinates) it's a hit
             humanPlayer.getPlayerBoard().getBoard()[coordinate.getRow()][coordinate.getColumn()] = 2;
             System.out.println("You've been hit in " + coordinate + "!");
             return Status.HIT;
@@ -319,7 +319,7 @@ public class Game {
      * @param battleship The battleship to be checked
      */
     public void isAIShipDestroyed(Battleship battleship) {
-        if (isShipDestroyed(battleship, aiPlayer)) {
+        if (isShipDestroyed(battleship, aiPlayer)) { //If the ship has been destroyed then turn all coordinates into 3s
             for (Coordinate c : battleship.getCoordinates()) {
                 humanPlayer.getHitBoard().getBoard()[c.getRow()][c.getColumn()] = 3;
             }
@@ -333,7 +333,7 @@ public class Game {
      */
     public void isPlayerShipDestroyed(Battleship battleship) {
         List<Coordinate> previousHits = aiAlgorithm.getPreviousShots().stream().filter(Coordinate::isHit).toList();
-        if (isShipDestroyed(battleship, humanPlayer)) {
+        if (isShipDestroyed(battleship, humanPlayer)) { //If the ship has been destroyed change the status of all previous coordinates matching those of the ships into destroyed
             for (Coordinate c : battleship.getCoordinates()) {
                 if (previousHits.stream().anyMatch(coordinate -> coordinate.equals(c))) {
                     previousHits.stream().filter(coordinate -> coordinate.equals(c)).findFirst().get().setStatus(Status.DESTROYED);
